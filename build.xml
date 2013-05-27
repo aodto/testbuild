@@ -122,5 +122,5 @@
 		</apply>
 	</target>
 
-	<target name="build" depends="clean,phpunit,phpunit-legacy,parallelTasks,phpcb" />
+	<target name="build" depends="clean,phpunit,parallelTasks,phpcb" />
 </project>
