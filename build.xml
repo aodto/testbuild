@@ -95,8 +95,10 @@
 
 	<target name="phpdoc" description="Generate API documentation using PHPDocumentor">
 		<exec executable="${peardir}/phpdoc${script-suffix}">
-			<arg value="-c" />
-			<arg path="${basedir}/phpdoc.xml" />
+			<arg value="--directory"/>
+			<arg path="${basedir}/"/>
+			<arg value="--target"/>
+			<arg path="${basedir}/build/api"/>
 		</exec>
 	</target>
 
