@@ -112,7 +112,7 @@
 	</target>
 
 	<target name="lint" description="Perform syntax check of sourcecode files">
-		<apply executable="php" failonerror="true">
+		<apply executable="${peardir}/php${script-suffix}" failonerror="true">
 			<arg value="-l" />
 
 			<fileset dir="${source}">
