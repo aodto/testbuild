@@ -4,9 +4,6 @@
 	<property name="source" value="libraries" />
 	<property name="joomlasource" value="libraries/joomla,libraries/legacy,libraries/compat,libraries/platform.php,libraries/loader.php,libraries/import.php" />
 
-	<property environment="env"/>
-	<property name="peardir" value="${env.PHP_PEAR_BIN_DIR}"/>
-
 	<condition property="script-suffix" value=".bat" else="">
 		<os family="windows" />
 	</condition>
@@ -30,7 +27,7 @@
 	</target>
 
 	<target name="phpunit" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
-		<exec executable="${peardir}/phpunit${script-suffix}">
+		<exec executable="phpunit${script-suffix}">
 			<arg value="--debug" />
 		</exec>
 	</target>
@@ -49,7 +46,7 @@
 	</target>
 
 	<target name="pdepend" description="Generate jdepend.xml and software metrics charts using PHP_Depend">
-		<exec executable="${peardir}/pdepend${script-suffix}">
+		<exec executable="pdepend${script-suffix}">
 			<arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
 			<arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
 			<arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
@@ -58,7 +55,7 @@
 	</target>
 
 	<target name="phpmd" description="Generate pmd.xml using PHPMD">
-		<exec executable="${peardir}/phpmd${script-suffix}">
+		<exec executable="phpmd${script-suffix}">
 			<arg path="${joomlasource}" />
 			<arg value="xml" />
 			<arg value="${basedir}/build/phpmd.xml" />
@@ -68,7 +65,7 @@
 	</target>
 
 	<target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
-		<exec executable="${peardir}/phpcpd${script-suffix}">
+		<exec executable="phpcpd${script-suffix}">
 			<arg value="--log-pmd" />
 			<arg value="${basedir}/build/logs/pmd-cpd.xml" />
 			<arg path="${source}/joomla" />
@@ -76,7 +73,7 @@
 	</target>
 
 	<target name="phploc" description="Generate phploc.csv">
-		<exec executable="${peardir}/phploc${script-suffix}">
+		<exec executable="phploc${script-suffix}">
 			<arg value="--log-csv" />
 			<arg value="${basedir}/build/logs/phploc.csv" />
 			<arg path="${source}/joomla" />
@@ -84,7 +81,7 @@
 	</target>
 
 	<target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
-		<exec executable="${peardir}/phpcs${script-suffix}">
+		<exec executable="phpcs${script-suffix}">
 			<arg value="--report=checkstyle" />
 			<arg value="--extensions=php,css" />
 			<arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
@@ -94,7 +91,7 @@
 	</target>
 
 	<target name="phpdoc" description="Generate API documentation using PHPDocumentor">
-		<exec executable="${peardir}/phpdoc${script-suffix}">
+		<exec executable="phpdoc${script-suffix}">
 			<arg value="--directory"/>
 			<arg path="${basedir}/"/>
 			<arg value="--target"/>
@@ -103,7 +100,7 @@
 	</target>
 
 	<target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-		<exec executable="${peardir}/phpcb${script-suffix}">
+		<exec executable="phpcb${script-suffix}">
 			<arg value="--log" />
 			<arg path="${basedir}/build/logs" />
 			<arg value="--source" />
@@ -114,7 +111,7 @@
 	</target>
 
 	<target name="lint" description="Perform syntax check of sourcecode files">
-		<apply executable="${peardir}/php${script-suffix}" failonerror="true">
+		<apply executable="php${script-suffix}" failonerror="true">
 			<arg value="-l" />
 
 			<fileset dir="${source}">
