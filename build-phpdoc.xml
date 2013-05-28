@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build phpdocumentor" default="build" basedir=".">
+
+	<property environment="env"/>
+	<property name="peardir" value="${env.PHP_PEAR_BIN_DIR}"/>
+
+	<condition property="script-suffix" value=".bat" else="">
+		<os family="windows" />
+	</condition>
+
+	<condition property="script-null" value="NUL" else="/dev/null">
+		<os family="windows" />
+	</condition>
+
+	<target name="clean" description="Clean up and create artifact directories">
+		<delete dir="${basedir}/build/api" />
+		<delete dir="${basedir}/build/code-browser" />
+		<delete dir="${basedir}/build/coverage" />
+		<delete dir="${basedir}/build/logs" />
+		<delete dir="${basedir}/build/pdepend" />
+
+		<mkdir dir="${basedir}/build/api" />
+		<mkdir dir="${basedir}/build/code-browser" />
+		<mkdir dir="${basedir}/build/coverage" />
+		<mkdir dir="${basedir}/build/logs" />
+		<mkdir dir="${basedir}/build/pdepend" />
+	</target>
+
+	<target name="phpdoc" description="Generate API documentation using PHPDocumentor">
+		<exec executable="${peardir}/phpdoc${script-suffix}">
+			<arg value="--directory"/>
+			<arg path="${basedir}/"/>
+			<arg value="--target"/>
+			<arg path="${basedir}/build/api"/>
+		</exec>
+	</target>
+
+	<target name="build" depends="clean,phpdoc" />
+</project>
