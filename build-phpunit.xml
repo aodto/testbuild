@@ -7,6 +7,9 @@
 	<condition property="script-suffix" value=".bat" else="">
 		<os family="windows" />
 	</condition>
+	
+	<property environment="env"/>
+	<property name="peardir" value="${env.PHP_PEAR_BIN_DIR}"/>
 
 	<condition property="script-null" value="NUL" else="/dev/null">
 		<os family="windows" />
@@ -27,7 +30,7 @@
 	</target>
 
 	<target name="phpunit" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
-		<exec executable="phpunit${script-suffix}" />
+		<exec executable="${peardir}/phpunit${script-suffix}" />
 	</target>
 
 
