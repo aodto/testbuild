@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="build-composer" default="build" basedir=".">
+	<property name="source" value="libraries" />
+	<property name="qatools" value="${basedir}/vendor/bin" />
+
+	<condition property="script-suffix" value=".bat" else="">
+		<os family="windows" />
+	</condition>
+
+	<condition property="script-null" value="NUL" else="/dev/null">
+		<os family="windows" />
+	</condition>
+
+	<target name="clean" description="Clean up and create artifact directories">
+		<delete dir="${basedir}/build/api" />
+		<delete dir="${basedir}/build/code-browser" />
+		<delete dir="${basedir}/build/coverage" />
+		<delete dir="${basedir}/build/logs" />
+		<delete dir="${basedir}/build/pdepend" />
+
+		<mkdir dir="${basedir}/build/api" />
+		<mkdir dir="${basedir}/build/code-browser" />
+		<mkdir dir="${basedir}/build/coverage" />
+		<mkdir dir="${basedir}/build/logs" />
+		<mkdir dir="${basedir}/build/pdepend" />
+	</target>
+
+	<target name="phpunit" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+		<exec executable="${qatools}/phpunit${script-suffix}" />
+	</target>
+
+	<target name="parallelTasks" description="Run the pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc tasks in parallel using a maximum of 2 threads.">
+		<parallel threadCount="2">
+			<sequential>
+				<antcall target="pdepend" />
+				<antcall target="phpmd" />
+			</sequential>
+			<antcall target="phpcpd" />
+			<antcall target="phpcs" />
+			<antcall target="phpdoc" />
+			<antcall target="phploc" />
+		</parallel>
+	</target>
+
+	<target name="pdepend" description="Generate jdepend.xml and software metrics charts using PHP_Depend">
+		<exec executable="${qatools}/pdepend${script-suffix}">
+			<arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+			<arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+			<arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+			<arg path="${source}/joomla" />
+		</exec>
+	</target>
+
+	<target name="phpmd" description="Generate pmd.xml using PHPMD">
+		<exec executable="${qatools}/phpmd${script-suffix}">
+			<arg path="${source}" />
+			<arg value="xml" />
+			<arg value="${basedir}/build/phpmd.xml" />
+			<arg value="--reportfile" />
+			<arg value="${basedir}/build/logs/pmd.xml" />
+		</exec>
+	</target>
+
+	<target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
+		<exec executable="${qatools}/phpcpd${script-suffix}">
+			<arg value="--log-pmd" />
+			<arg value="${basedir}/build/logs/pmd-cpd.xml" />
+			<arg path="${source}" />
+		</exec>
+	</target>
+
+	<target name="phploc" description="Generate phploc.csv">
+		<exec executable="${qatools}/phploc${script-suffix}">
+			<arg value="--log-csv" />
+			<arg value="${basedir}/build/logs/phploc.csv" />
+			<arg path="${source}" />
+		</exec>
+	</target>
+
+	<target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
+		<exec executable="${qatools}/phpcs${script-suffix}">
+			<arg value="--report=checkstyle" />
+			<arg value="--extensions=php,css" />
+			<arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+			<arg value="--standard=${basedir}/build/phpcs.xml" />
+			<arg path="${source}" />
+		</exec>
+	</target>
+
+	<target name="phpdoc" description="Generate API documentation using PHPDocumentor">
+		<exec executable="${qatools}/phpdoc${script-suffix}">
+			<arg value="-c" />
+			<arg path="${basedir}/phpdoc.xml" />
+		</exec>
+	</target>
+
+	<target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
+		<exec executable="${qatools}/phpcb${script-suffix}">
+			<arg value="--log" />
+			<arg path="${basedir}/build/logs" />
+			<arg value="--source" />
+			<arg path="${source}" />
+			<arg value="--output" />
+			<arg path="${basedir}/build/code-browser" />
+		</exec>
+	</target>
+
+	<target name="lint" description="Perform syntax check of sourcecode files">
+		<apply executable="php" failonerror="true">
+			<arg value="-l" />
+
+			<fileset dir="${source}">
+				<include name="**/*.php" />
+				<modified />
+			</fileset>
+		</apply>
+	</target>
+
+	<target name="build" depends="clean,parallelTasks,phpcb" />
+</project>
